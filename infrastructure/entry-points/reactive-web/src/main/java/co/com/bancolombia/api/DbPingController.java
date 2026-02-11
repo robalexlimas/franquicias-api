@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,13 +21,14 @@ public class DbPingController {
     public Mono<Map<String, Object>> ping() {
         return db.count()
                 .map(count -> {
-                    Map<String, Object> ok = new java.util.HashMap<>();
+                    Map<String, Object> ok = new HashMap<>();
                     ok.put("connected", true);
+                    ok.put("collection", "franchises");
                     ok.put("count", count);
                     return ok;
                 })
                 .onErrorResume(e -> {
-                    Map<String, Object> fail = new java.util.HashMap<>();
+                    Map<String, Object> fail = new HashMap<>();
                     fail.put("connected", false);
                     fail.put("error", e.getMessage());
                     return Mono.just(fail);

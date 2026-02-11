@@ -17,6 +17,23 @@ plugins {
 	id 'jacoco'
 }
 
+subprojects {
+    apply plugin: 'jacoco'
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        finalizedBy 'jacocoTestReport'
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+}
+
 sonar {
     def modules = subprojects.projectDir.collect { "${it.toString().replace(project.projectDir.toString() + "/", "")}" }
     properties {

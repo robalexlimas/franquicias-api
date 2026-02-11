@@ -14,6 +14,8 @@ spring:
   data:
     mongodb:
       uri: ${SPRING_DATA_MONGODB_URI}
+db:
+  provider: ${DB_PROVIDER:mongodb}
 management:
   endpoints:
     web:

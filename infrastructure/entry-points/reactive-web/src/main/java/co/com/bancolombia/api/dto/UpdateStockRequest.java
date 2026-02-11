@@ -1,10 +1,12 @@
 package co.com.bancolombia.api.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class UpdateStockRequest {
     private int stock;
-
-    public UpdateStockRequest() {}
-
-    public int getStock() { return stock; }
-    public void setStock(int stock) { this.stock = stock; }
 }

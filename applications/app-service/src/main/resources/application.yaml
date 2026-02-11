@@ -11,6 +11,9 @@ spring:
       path: "/h2"
   profiles:
     include: null
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
 management:
   endpoints:
     web:

@@ -12,6 +12,5 @@ public interface ProductMongoRepository extends
     Flux<ProductDocument> findAllByBranchId(String branchId);
     Mono<Boolean> existsByBranchIdAndName(String branchId, String name);
 
-    // Para "producto con mayor stock por sucursal"
     Mono<ProductDocument> findFirstByBranchIdOrderByStockDesc(String branchId);
 }

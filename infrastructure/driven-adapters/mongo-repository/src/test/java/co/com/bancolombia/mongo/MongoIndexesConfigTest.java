@@ -23,7 +23,6 @@ class MongoIndexesConfigTest {
         when(template.indexOps(BranchDocument.class)).thenReturn(branchOps);
         when(template.indexOps(ProductDocument.class)).thenReturn(productOps);
 
-        // ensureIndex -> Mono<String>
         when(franchiseOps.ensureIndex(any())).thenReturn(Mono.just("idx_franchise_name"));
         when(branchOps.ensureIndex(any())).thenReturn(Mono.just("idx_branch_any"));
         when(productOps.ensureIndex(any())).thenReturn(Mono.just("idx_product_any"));
@@ -33,13 +32,10 @@ class MongoIndexesConfigTest {
         StepVerifier.create(config.ensureIndexes(template))
                 .verifyComplete();
 
-        // 1 index en Franchise
         verify(franchiseOps, times(1)).ensureIndex(any());
 
-        // 2 index en Branch
         verify(branchOps, times(2)).ensureIndex(any());
 
-        // 3 index en Product
         verify(productOps, times(3)).ensureIndex(any());
 
         verifyNoMoreInteractions(franchiseOps, branchOps, productOps);

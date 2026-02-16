@@ -16,7 +16,6 @@ import static org.mockito.Mockito.*;
 
 class AdapterOperationsTest {
 
-    // Entidad (E) y Data (D) simples para probar mapping
     static class Entity {
         final String id;
         final String name;

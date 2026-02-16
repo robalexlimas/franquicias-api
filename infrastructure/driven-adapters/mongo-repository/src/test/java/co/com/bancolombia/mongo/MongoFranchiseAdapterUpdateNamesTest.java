@@ -26,10 +26,6 @@ class MongoFranchiseAdapterUpdateNamesTest {
         adapter = new MongoFranchiseAdapter(franchiseRepo, branchRepo, productRepo);
     }
 
-    // -------------------------
-    // updateFranchiseName
-    // -------------------------
-
     @Test
     void updateFranchiseName_shouldFail_whenIdBlank() {
         StepVerifier.create(adapter.updateFranchiseName("  ", "New"))
@@ -67,14 +63,12 @@ class MongoFranchiseAdapterUpdateNamesTest {
         FranchiseDocument existing = new FranchiseDocument("f-1", "ACME", created, updated);
 
         when(franchiseRepo.findById("f-1")).thenReturn(Mono.just(existing));
-        // Igual se llama existsByName, pero la rama "same name" debe ignorar el dup y guardar.
-        when(franchiseRepo.existsByName("ACME")).thenReturn(Mono.just(true));
+                when(franchiseRepo.existsByName("ACME")).thenReturn(Mono.just(true));
         when(franchiseRepo.save(any(FranchiseDocument.class)))
                 .thenAnswer(inv -> Mono.just(inv.getArgument(0)));
 
         StepVerifier.create(adapter.updateFranchiseName("f-1", " ACME "))
                 .assertNext(fr -> {
-                    // solo validamos lo esencial
                     org.junit.jupiter.api.Assertions.assertEquals("f-1", fr.getId());
                     org.junit.jupiter.api.Assertions.assertEquals("ACME", fr.getName());
                 })
@@ -124,11 +118,7 @@ class MongoFranchiseAdapterUpdateNamesTest {
 
         verify(franchiseRepo).save(argThat(doc -> doc.getName().equals("NEW")));
     }
-
-    // -------------------------
-    // updateBranchName
-    // -------------------------
-
+            
     @Test
     void updateBranchName_shouldFail_whenIdBlank() {
         StepVerifier.create(adapter.updateBranchName(" ", "X"))
@@ -205,11 +195,7 @@ class MongoFranchiseAdapterUpdateNamesTest {
 
         verify(branchRepo).save(argThat(doc -> doc.getName().equals("NEW")));
     }
-
-    // -------------------------
-    // updateProductName
-    // -------------------------
-
+            
     @Test
     void updateProductName_shouldFail_whenIdBlank() {
         StepVerifier.create(adapter.updateProductName(" ", "X"))

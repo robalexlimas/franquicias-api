@@ -170,7 +170,6 @@ class HandlerTest {
 
     @Test
     void deleteProduct_notFound_mapsTo400_inCurrentHandler() {
-        // Nota: tu Handler hoy mapea IllegalArgumentException -> 400 (no 404)
         Mockito.when(deleteProductUseCase.execute(eq("pr-404")))
                 .thenReturn(Mono.error(new IllegalArgumentException("Product not found")));
 
@@ -219,6 +218,6 @@ class HandlerTest {
                 .jsonPath("$[0].productId").isEqualTo("pr-1")
                 .jsonPath("$[0].stock").isEqualTo(50)
                 .jsonPath("$[1].branchId").isEqualTo("br-2")
-                .jsonPath("$[1].productId").doesNotExist(); // null => a veces no se serializa, esto cubre ambos casos
+                .jsonPath("$[1].productId").doesNotExist(); 
     }
 }

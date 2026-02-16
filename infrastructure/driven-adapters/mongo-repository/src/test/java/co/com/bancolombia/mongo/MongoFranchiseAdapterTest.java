@@ -28,9 +28,6 @@ class MongoFranchiseAdapterTest {
         adapter = new MongoFranchiseAdapter(franchiseRepo, branchRepo, productRepo);
     }
 
-    // -------------------------
-    // createFranchise
-    // -------------------------
     @Test
     void createFranchise_shouldError_whenNameIsBlank() {
         StepVerifier.create(adapter.createFranchise("   "))
@@ -67,10 +64,8 @@ class MongoFranchiseAdapterTest {
 
         StepVerifier.create(adapter.createFranchise("  Nequi  "))
                 .assertNext(fr -> {
-                    // mapeo dominio
                     org.junit.jupiter.api.Assertions.assertEquals("f-1", fr.getId());
-                    org.junit.jupiter.api.Assertions.assertEquals("Nequi", fr.getName()); // trim
-                })
+                    org.junit.jupiter.api.Assertions.assertEquals("Nequi", fr.getName());                 })
                 .verifyComplete();
 
         verify(franchiseRepo).existsByName("Nequi");
@@ -78,9 +73,6 @@ class MongoFranchiseAdapterTest {
         verifyNoInteractions(branchRepo, productRepo);
     }
 
-    // -------------------------
-    // addBranch
-    // -------------------------
     @Test
     void addBranch_shouldError_whenFranchiseNotFound() {
         when(franchiseRepo.existsById("f-1")).thenReturn(Mono.just(false));
@@ -134,9 +126,6 @@ class MongoFranchiseAdapterTest {
         verifyNoInteractions(productRepo);
     }
 
-    // -------------------------
-    // topProductByBranch
-    // -------------------------
     @Test
     void topProductByBranch_shouldReturnTopProductOrEmptyPerBranch() {
         when(franchiseRepo.existsById("f-1")).thenReturn(Mono.just(true));
@@ -147,8 +136,7 @@ class MongoFranchiseAdapterTest {
 
         ProductDocument p1 = new ProductDocument("p-1", "br-1", "Burger", 50, Instant.now(), Instant.now());
         when(productRepo.findFirstByBranchIdOrderByStockDesc("br-1")).thenReturn(Mono.just(p1));
-        when(productRepo.findFirstByBranchIdOrderByStockDesc("br-2")).thenReturn(Mono.empty()); // no products
-
+        when(productRepo.findFirstByBranchIdOrderByStockDesc("br-2")).thenReturn(Mono.empty()); 
         StepVerifier.create(adapter.topProductByBranch("f-1"))
                 .assertNext(t -> {
                     org.junit.jupiter.api.Assertions.assertEquals("br-1", t.getBranchId());
@@ -172,9 +160,6 @@ class MongoFranchiseAdapterTest {
         verify(productRepo).findFirstByBranchIdOrderByStockDesc("br-2");
     }
 
-    // -------------------------
-    // addProduct
-    // -------------------------
     @Test
     void addProduct_shouldError_whenBranchIdBlank() {
         StepVerifier.create(adapter.addProduct("  ", "Burger", 10))
@@ -232,9 +217,6 @@ class MongoFranchiseAdapterTest {
         verifyNoInteractions(franchiseRepo);
     }
 
-    // -------------------------
-    // deleteProduct
-    // -------------------------
     @Test
     void deleteProduct_shouldError_whenProductIdBlank() {
         StepVerifier.create(adapter.deleteProduct("  "))
@@ -272,9 +254,6 @@ class MongoFranchiseAdapterTest {
         verifyNoInteractions(franchiseRepo, branchRepo);
     }
 
-    // -------------------------
-    // updateProductStock
-    // -------------------------
     @Test
     void updateProductStock_shouldError_whenProductIdBlank() {
         StepVerifier.create(adapter.updateProductStock("  ", 10))

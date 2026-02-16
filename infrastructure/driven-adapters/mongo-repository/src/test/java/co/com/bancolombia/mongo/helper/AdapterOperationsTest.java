@@ -1,95 +1,43 @@
-package co.com.bancolombia.mongo.helper;
+package co.com.bancolombia.mongo;
 
-import co.com.bancolombia.mongo.MongoDBRepository;
-import co.com.bancolombia.mongo.MongoRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.reactivecommons.utils.ObjectMapper;
-import org.springframework.data.domain.Example;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class AdapterOperationsTest {
+class MongoRepositoryAdapterTest {
 
     @Mock
-    private MongoDBRepository repository;
-
-    @Mock
-    private ObjectMapper objectMapper;
+    private FranchiseMongoRepository franchiseRepo;
 
     private MongoRepositoryAdapter adapter;
-
-    private Object entity;
-    private Flux<Object> entities;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        when(objectMapper.map("value", Object.class)).thenReturn("value");
-
-        adapter = new MongoRepositoryAdapter(repository, objectMapper);
-
-        entity = "value";
-        entities = Flux.just(entity);
+        adapter = new MongoRepositoryAdapter(franchiseRepo);
     }
 
     @Test
-    void testSave() {
-        when(repository.save(entity)).thenReturn(Mono.just("value"));
+    void shouldReturnCountFromRepository() {
+        when(franchiseRepo.count()).thenReturn(Mono.just(5L));
 
-        StepVerifier.create(adapter.save(entity))
-                .expectNext("value")
+        StepVerifier.create(adapter.count())
+                .expectNext(5L)
                 .verifyComplete();
     }
 
     @Test
-    void testSaveAll() {
-        when(repository.saveAll(any(Flux.class))).thenReturn(entities);
+    void shouldPropagateErrorFromRepository() {
+        RuntimeException error = new RuntimeException("DB error");
+        when(franchiseRepo.count()).thenReturn(Mono.error(error));
 
-        StepVerifier.create(adapter.saveAll(entities))
-                .expectNext("value")
-                .verifyComplete();
-    }
-
-    @Test
-    void testFindById() {
-        when(repository.findById("key")).thenReturn(Mono.just(entity));
-
-        StepVerifier.create(adapter.findById("key"))
-                .expectNext("value")
-                .verifyComplete();
-    }
-
-    @Test
-    void testFindByExample() {
-        when(repository.findAll(any(Example.class))).thenReturn(entities);
-
-        StepVerifier.create(adapter.findByExample(entity))
-                .expectNext("value")
-                .verifyComplete();
-    }
-
-    @Test
-    void testFindAll() {
-        when(repository.findAll()).thenReturn(entities);
-
-        StepVerifier.create(adapter.findAll())
-                .expectNext("value")
-                .verifyComplete();
-    }
-
-    @Test
-    void testDeleteById() {
-        when(repository.deleteById("key")).thenReturn(Mono.empty());
-
-        StepVerifier.create(adapter.deleteById("key"))
-                .verifyComplete();
+        StepVerifier.create(adapter.count())
+                .expectError(RuntimeException.class)
+                .verify();
     }
 }

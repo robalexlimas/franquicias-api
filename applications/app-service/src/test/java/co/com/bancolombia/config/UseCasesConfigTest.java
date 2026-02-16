@@ -1,17 +1,19 @@
 package co.com.bancolombia.config;
 
+import co.com.bancolombia.model.gateways.FranchiseGateway;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.mockito.Mockito;
+import org.springframework.context.annotation.*;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UseCasesConfigTest {
 
     @Test
     void testUseCaseBeansExist() {
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class)) {
+        try (AnnotationConfigApplicationContext context =
+                     new AnnotationConfigApplicationContext(TestConfig.class)) {
+
             String[] beanNames = context.getBeanDefinitionNames();
 
             boolean useCaseBeanFound = false;
@@ -22,7 +24,7 @@ class UseCasesConfigTest {
                 }
             }
 
-            assertTrue(useCaseBeanFound, "No beans ending with 'Use Case' were found");
+            assertTrue(useCaseBeanFound, "No beans ending with 'UseCase' were found");
         }
     }
 
@@ -31,14 +33,8 @@ class UseCasesConfigTest {
     static class TestConfig {
 
         @Bean
-        public MyUseCase myUseCase() {
-            return new MyUseCase();
-        }
-    }
-
-    static class MyUseCase {
-        public String execute() {
-            return "MyUseCase Test";
+        public FranchiseGateway franchiseGateway() {
+            return Mockito.mock(FranchiseGateway.class);
         }
     }
 }

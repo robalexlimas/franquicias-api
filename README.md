@@ -280,3 +280,60 @@ Se registran:
 - Errores de negocio
 - Validaciones
 - Eventos relevantes
+
+## Docker (Plus)
+
+El proyecto incluye un `Dockerfile` dentro de `deployment/` para empaquetar y ejecutar la aplicación en un contenedor.
+
+1. Compilar y generar el JAR
+
+> Nota: el `Dockerfile` asume que existe un JAR en `applications/app-service/build/libs/`.
+
+Desde la raíz del proyecto:
+
+```bash
+./gradlew clean build
+```
+
+Valida que el JAR exista:
+
+```bash
+ls -la applications/app-service/build/libs/
+```
+
+Deberías ver un archivo tipo:
+
+```bash
+app-service-<version>.jar (o similar)
+```
+
+2. Construir la imagen Docker
+
+Desde la raíz del proyecto:
+
+```bash
+docker build -f deployment/Dockerfile -t franquicias-api:latest .
+```
+
+Verifica que la imagen quedó creada:
+
+```bash
+docker images | grep franquicias-api
+```
+
+3. Ejecutar el contenedor
+
+La aplicación requiere la variable de entorno ```SPRING_DATA_MONGODB_URI``` para conectarse a MongoDB (por ejemplo Atlas).
+
+Ejemplo:
+
+```bash
+docker run --rm --name franquicias-api \
+  -p 8080:8080 \
+  -e SPRING_DATA_MONGODB_URI="mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority" \
+  franquicias-api:latest
+```
+
+4. Validación rápida
+- Swagger UI:
+- http://localhost:8080/swagger-ui.html
